@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wecode_final/app_brain.dart';
+import 'package:wecode_final/providers/app_brain.dart';
 import 'package:wecode_final/providers/product_provider.dart';
 import 'package:wecode_final/widgets/product_item.dart';
 
 class ProductsGrid extends StatelessWidget {
-  const ProductsGrid({
-    Key? key,
-  }) : super(key: key);
-
+  const ProductsGrid({Key? key, required this.showFavs}) : super(key: key);
+  final bool showFavs;
   @override
   Widget build(BuildContext context) {
-    final loadingProduct = Provider.of<Products>(context).items;
+    final loadingProduct = Provider.of<Products>(context);
+    final showProducts =
+        showFavs ? loadingProduct.favouriteItems : loadingProduct.items;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: GridView.builder(
@@ -24,7 +24,7 @@ class ProductsGrid extends StatelessWidget {
         itemBuilder: (context, index) {
           return ChangeNotifierProvider.value(
             // create: (context) => loadingProduct[index],
-            value: loadingProduct[index],
+            value: showProducts[index],
             child: ProductItem(
                 // id: loadingProduct[index].id,
                 // imageUrl: loadingProduct[index].imageUrl,
@@ -32,7 +32,7 @@ class ProductsGrid extends StatelessWidget {
                 ),
           );
         },
-        itemCount: loadingProduct.length,
+        itemCount: showProducts.length,
       ),
     );
   }

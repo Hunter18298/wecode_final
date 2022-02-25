@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wecode_final/constants.dart';
+import 'package:wecode_final/providers/cart.dart';
 import 'package:wecode_final/providers/product_provider.dart';
 import 'package:wecode_final/screens/home_screen.dart';
 import 'package:wecode_final/screens/product_detail_screen.dart';
@@ -15,8 +16,15 @@ class MyApp extends StatelessWidget {
   ThemeData theme = ThemeData();
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Products(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => Products(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Cart(),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'WeShop',

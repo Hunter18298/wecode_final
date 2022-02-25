@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:wecode_final/app_brain.dart';
+import 'package:wecode_final/providers/app_brain.dart';
 import 'package:wecode_final/widgets/carousel_builder.dart';
 import 'package:wecode_final/widgets/category_boxes.dart';
 
