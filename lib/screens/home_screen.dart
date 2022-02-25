@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
               child: Icon(Icons.filter_vintage))
         ],
       ),
-      body: Column(
+      body: ListView(
         children: [
           CostumeRow(),
           ProductsGrid(),
