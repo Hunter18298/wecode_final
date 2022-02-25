@@ -1,42 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:wecode_final/constants.dart';
+import 'package:wecode_final/providers/app_brain.dart';
+import 'package:wecode_final/providers/cart.dart';
 import 'package:wecode_final/screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
-  const ProductItem(
-      {Key? key, required this.id, required this.imageUrl, required this.title})
-      : super(key: key);
-  final String id;
-  final String imageUrl;
-  final String title;
+  // const ProductItem(
+  //     {Key? key, required this.id, required this.imageUrl, required this.title})
+  //     : super(key: key);
+  // final String id;
+  // final String imageUrl;
+  // final String title;
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.0),
-      child: GridTile(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              ProductDetailScreen.productDetail,
-              arguments: id,
-            );
-          },
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
+    final cart = Provider.of<Cart>(context);
+    return Consumer<AppData>(
+      builder: (context, product, child) => ClipRRect(
+        borderRadius: BorderRadius.circular(20.0),
+        child: GridTile(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                ProductDetailScreen.productDetail,
+                arguments: product.id,
+              );
+            },
+            child: Image.network(
+              product.imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        footer: GridTileBar(
-          backgroundColor: Colors.black38,
-          title: Text(
-            title,
-            textAlign: TextAlign.center,
+          footer: GridTileBar(
+            backgroundColor: Colors.black38,
+            title: Text(
+              product.title,
+              textAlign: TextAlign.center,
+            ),
+            leading: IconButton(
+                icon: Icon(product.isFavourite
+                    ? Icons.favorite
+                    : Icons.favorite_outline_outlined),
+                onPressed: () {
+                  product.favouriteStatus();
+                }),
+            trailing: IconButton(
+                icon: Icon(Icons.add_shopping_cart),
+                onPressed: () {
+                  cart.addProduct(product.id, product.price, product.title);
+                }),
           ),
-          leading: IconButton(
-              icon: Icon(Icons.favorite_border_outlined), onPressed: () {}),
-          trailing:
-              IconButton(icon: Icon(Icons.add_shopping_cart), onPressed: () {}),
         ),
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wecode_final/app_brain.dart';
+import 'package:wecode_final/providers/app_brain.dart';
 
 class Products with ChangeNotifier {
   List<AppData> _items = [
@@ -36,12 +36,33 @@ class Products with ChangeNotifier {
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
-
+  // bool _showFavourite = false;
   List<AppData> get items {
+    // if (_showFavourite) {
+
+    // }
     return [..._items];
+  }
+
+  List<AppData> get favouriteItems {
+    return _items.where((element) => element.isFavourite).toList();
+  }
+
+  AppData findById(String id) {
+    return _items.firstWhere((prod) => prod.id == id);
   }
 
   void addProducts() {
     notifyListeners();
   }
+
+  // void showFavourite() {
+  //   _showFavourite = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showFavourite = false;
+  //   notifyListeners();
+  // }
 }

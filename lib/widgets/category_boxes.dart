@@ -11,7 +11,7 @@ class MaterialBoxes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextStyle kCategoriesHomeText = TextStyle(
-        fontSize: 22 * MediaQuery.of(context).textScaleFactor,
+        fontSize: MediaQuery.of(context).textScaleFactor * 16,
         color: Colors.white,
         fontWeight: FontWeight.bold);
     return Container(
