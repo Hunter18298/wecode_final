@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wecode_final/providers/app_brain.dart';
 import 'package:wecode_final/constants.dart';
+import 'package:wecode_final/screens/cart_screen.dart';
 import 'package:wecode_final/widgets/badge.dart';
 import 'package:wecode_final/widgets/costume_row.dart';
 import 'package:wecode_final/widgets/product_grid.dart';
@@ -61,7 +62,9 @@ class _HomePageState extends State<HomePage> {
             builder: (context, cartData, ch) =>
                 Badge(child: ch!, value: cartData.itemCount.toString()),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, CartScreen.cartScreen);
+              },
               icon: Icon(
                 Icons.shopping_cart,
               ),
