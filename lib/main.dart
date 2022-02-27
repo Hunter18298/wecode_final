@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:wecode_final/constants.dart';
 import 'package:wecode_final/providers/cart.dart';
 import 'package:wecode_final/providers/product_provider.dart';
+import 'package:wecode_final/screens/cart_screen.dart';
 import 'package:wecode_final/screens/home_screen.dart';
+import 'package:wecode_final/providers/orders.dart';
 import 'package:wecode_final/screens/product_detail_screen.dart';
 
 //main  of these app
@@ -24,6 +26,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Cart(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => Orders(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,6 +44,7 @@ class MyApp extends StatelessWidget {
         home: HomePage(),
         routes: {
           ProductDetailScreen.productDetail: (context) => ProductDetailScreen(),
+          CartScreen.cartScreen: (context) => const CartScreen(),
         },
       ),
     );
