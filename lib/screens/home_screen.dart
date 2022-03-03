@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wecode_final/providers/app_brain.dart';
 import 'package:wecode_final/constants.dart';
 import 'package:wecode_final/screens/cart_screen.dart';
+import 'package:wecode_final/widgets/app_drawer.dart';
 import 'package:wecode_final/widgets/badge.dart';
 import 'package:wecode_final/widgets/costume_row.dart';
 import 'package:wecode_final/widgets/product_grid.dart';
@@ -72,6 +73,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: ListView(
         children: [
           CostumeRow(),
