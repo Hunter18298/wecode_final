@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         title: 'WeShop',
         theme: ThemeData(
           appBarTheme: AppBarTheme(
+              color: kLightBlue,
               actionsIconTheme: IconThemeData(color: kMainBlue, size: 30)),
           colorScheme: ColorScheme.light().copyWith(
             primary: kMainBlue,
