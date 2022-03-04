@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         primary: true,
         backgroundColor: kWhite,
+        foregroundColor: kMainBlue,
         elevation: 0,
         shadowColor: Colors.transparent,
         actions: [
