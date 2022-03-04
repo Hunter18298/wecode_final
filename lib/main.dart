@@ -4,10 +4,12 @@ import 'package:wecode_final/constants.dart';
 import 'package:wecode_final/providers/cart.dart';
 import 'package:wecode_final/providers/product_provider.dart';
 import 'package:wecode_final/screens/cart_screen.dart';
+import 'package:wecode_final/screens/edit_product_screen.dart';
 import 'package:wecode_final/screens/home_screen.dart';
 import 'package:wecode_final/providers/orders.dart';
 import 'package:wecode_final/screens/orders_scren.dart';
 import 'package:wecode_final/screens/product_detail_screen.dart';
+import 'package:wecode_final/screens/user_products_screen.dart';
 
 //main  of these app
 void main() {
@@ -47,6 +49,8 @@ class MyApp extends StatelessWidget {
           ProductDetailScreen.productDetail: (context) => ProductDetailScreen(),
           CartScreen.cartScreen: (context) => const CartScreen(),
           OrdersScren.routeName: (context) => OrdersScren(),
+          UserProductsScreen.routeName: (context) => UserProductsScreen(),
+          EditProductScreen.routeName: (context) => EditProductScreen()
         },
       ),
     );

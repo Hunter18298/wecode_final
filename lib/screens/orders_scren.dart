@@ -12,6 +12,7 @@ class OrdersScren extends StatelessWidget {
   Widget build(BuildContext context) {
     final orderData = Provider.of<Orders>(context);
     return Scaffold(
+      appBar: AppBar(),
       drawer: AppDrawer(),
       body: SafeArea(
         child: ListView.builder(
