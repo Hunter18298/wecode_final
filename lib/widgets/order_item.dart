@@ -27,7 +27,7 @@ class _OrderItemsState extends State<OrderItems> {
           Padding(
             padding: EdgeInsets.all(10.0),
             child: ListTile(
-                title: Text("\$${widget.order!.amount}"),
+                title: Text("\$${widget.order!.amount.toStringAsFixed(2)}"),
                 subtitle: Text(DateFormat("dd/MM/yyyy hh:mm")
                     .format(widget.order!.dateTime)),
                 trailing: IconButton(

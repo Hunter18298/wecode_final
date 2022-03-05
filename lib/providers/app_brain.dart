@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class AppData with ChangeNotifier {
   static List<String> images = [
@@ -32,8 +35,30 @@ class AppData with ChangeNotifier {
     required this.imageUrl,
     this.isFavourite = false,
   });
-  void favouriteStatus() {
+  void _setFavValue(bool newValue) {
+    isFavourite = newValue;
+    notifyListeners();
+  }
+
+  Future<void> favouriteStatus() async {
+    final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
+    final Uri url = Uri.parse(
+      'https://wecodefinal-default-rtdb.firebaseio.com/products/$id.json',
+    );
+    try {
+      http.Response response = await http.patch(
+        url,
+        body: jsonEncode({
+          'isFavourite': isFavourite,
+        }),
+      );
+      if (response.statusCode >= 400) {
+        _setFavValue(oldStatus);
+      }
+    } catch (error) {
+      _setFavValue(oldStatus);
+    }
   }
 }
