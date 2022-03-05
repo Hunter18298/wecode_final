@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wecode_final/providers/app_brain.dart';
 import 'package:wecode_final/constants.dart';
+import 'package:wecode_final/providers/product_provider.dart';
 import 'package:wecode_final/screens/cart_screen.dart';
 import 'package:wecode_final/widgets/app_drawer.dart';
 import 'package:wecode_final/widgets/badge.dart';
@@ -25,6 +26,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _showFavourite = false;
+  bool _isInit = true;
+  bool _loading = false;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _loading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((value) {
+        setState(() {
+          _loading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  } //to load until products is loaded
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,13 +72,13 @@ class _HomePageState extends State<HomePage> {
                     }
                   });
                 },
-                icon: Icon(Icons.filter_vintage),
+                icon: const Icon(Icons.filter_vintage),
                 itemBuilder: (context) => [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     child: Text('My Favourites'),
                     value: FilterOptions.Favourite,
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     child: Text('All'),
                     value: FilterOptions.All,
                   ),
@@ -67,7 +91,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.pushNamed(context, CartScreen.cartScreen);
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.shopping_cart,
               ),
             ),
@@ -75,14 +99,18 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ListView(
-        children: [
-          CostumeRow(),
-          ProductsGrid(
-            showFavs: _showFavourite,
-          ),
-        ],
-      ),
+      body: _loading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView(
+              children: [
+                CostumeRow(),
+                ProductsGrid(
+                  showFavs: _showFavourite,
+                ),
+              ],
+            ),
     );
   }
 }
