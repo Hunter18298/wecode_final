@@ -19,7 +19,7 @@ enum FilterOptions {
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
-
+  static const routeName = '/';
   @override
   State<HomePage> createState() => _HomePageState();
 }

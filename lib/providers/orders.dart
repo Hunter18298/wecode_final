@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:wecode_final/providers/cart.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import './cart.dart';
 
 class OrderItem {
   final String id;
   final double amount;
-  final List<CartItem> products; //quantity
+  final List<CartItem> products;
   final DateTime dateTime;
 
   OrderItem({
@@ -20,73 +21,75 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String authToken;
+  final String userId;
+
+  Orders(this.authToken, this.userId, this._orders);
+
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    final Uri url = Uri.parse(
-      'https://wecodefinal-default-rtdb.firebaseio.com/orders.json',
-    );
-    http.Response response = await http.get(url);
-    final List<OrderItem> loadingOrders = [];
-    final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
-    if (extractedData == Null) {
+    final url = Uri.https('flutter-update.firebaseio.com',
+        '/orders/$userId.json?auth=$authToken');
+    final response = await http.get(url);
+    final List<OrderItem> loadedOrders = [];
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    if (extractedData == null) {
       return;
     }
-    // try {
-    extractedData.forEach((orderId, OrderData) {
-      loadingOrders.add(
+    extractedData.forEach((orderId, orderData) {
+      loadedOrders.add(
         OrderItem(
           id: orderId,
-          amount: OrderData['amount'],
-          products: (OrderData['products'] as List<dynamic>)
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(orderData['dateTime']),
+          products: (orderData['products'] as List<dynamic>)
               .map(
-                (e) => CartItem(e['id'], e['title'], e['quantity'], e['price']),
+                (item) => CartItem(
+                  id: item['id'],
+                  price: item['price'],
+                  quantity: item['quantity'],
+                  title: item['title'],
+                ),
               )
               .toList(),
-          dateTime: DateTime.parse(
-            OrderData['dateTime'],
-          ),
         ),
       );
     });
-    _orders = loadingOrders.reversed.toList();
+    _orders = loadedOrders.reversed.toList();
     notifyListeners();
-    // } catch (e) {
-    //   throw e;
-    // }
   }
 
-  Future<void> addOrder(List<CartItem> cartProduct, double total) async {
-    final Uri url = Uri.parse(
-      'https://wecodefinal-default-rtdb.firebaseio.com/orders.json',
-    );
+  Future<void> addOrder(List<CartItem> cartProducts, double total) async {
+    final url = Uri.https('flutter-update.firebaseio.com',
+        '/orders/$userId.json?auth=$authToken');
     final timestamp = DateTime.now();
-    try {
-      http.Response response = await http.post(url,
-          body: jsonEncode({
-            'amount': total,
-            'dateTime': timestamp.toIso8601String(),
-            'products': cartProduct
-                .map((e) => {
-                      'id': e.id,
-                      'title': e.title,
-                      'quantity': e.quantity,
-                      'price': e.price,
-                    })
-                .toList(),
-          }));
-      _orders.insert(
-          0,
-          OrderItem(
-              id: jsonDecode(response.body)['name'],
-              amount: total,
-              products: cartProduct,
-              dateTime: DateTime.now()));
-      notifyListeners();
-    } catch (e) {
-      throw e;
-    }
+    final response = await http.post(
+      url,
+      body: json.encode({
+        'amount': total,
+        'dateTime': timestamp.toIso8601String(),
+        'products': cartProducts
+            .map((cp) => {
+                  'id': cp.id,
+                  'title': cp.title,
+                  'quantity': cp.quantity,
+                  'price': cp.price,
+                })
+            .toList(),
+      }),
+    );
+    _orders.insert(
+      0,
+      OrderItem(
+        id: json.decode(response.body)['name'],
+        amount: total,
+        dateTime: timestamp,
+        products: cartProducts,
+      ),
+    );
+    notifyListeners();
   }
 }

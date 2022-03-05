@@ -21,6 +21,7 @@ class AppData with ChangeNotifier {
     'any image',
     'image'
   ];
+
   final String id;
   final String title;
   final String description;
@@ -40,19 +41,18 @@ class AppData with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> favouriteStatus() async {
+  Future<void> toggleFavoriteStatus(String token, String userId) async {
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
-    final Uri url = Uri.parse(
-      'https://wecodefinal-default-rtdb.firebaseio.com/products/$id.json',
-    );
+    final url = Uri.https('flutter-update.firebaseio.com',
+        '/userFavorites/$userId/$id.json?auth=$token');
     try {
-      http.Response response = await http.patch(
+      final response = await http.put(
         url,
-        body: jsonEncode({
-          'isFavourite': isFavourite,
-        }),
+        body: json.encode(
+          isFavourite,
+        ),
       );
       if (response.statusCode >= 400) {
         _setFavValue(oldStatus);
