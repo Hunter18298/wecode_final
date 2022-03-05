@@ -39,6 +39,11 @@ class Products with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
+  String authToken;
+
+  final String userId;
+
+  Products(this.authToken, this.userId, this._items);
   // bool _showFavourite = false;
   List<AppData> get items {
     // if (_showFavourite) {
@@ -69,10 +74,12 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     // try {
-    final Uri url = Uri.parse(
-      'https://wecodefinal-default-rtdb.firebaseio.com/products.json',
+    Uri url = Uri.parse(
+      'https://wecodefinal-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString',
     ); //to create a new products.json if its not there as a file to save
     http.Response response = await http.get(url);
     Map<String, dynamic> exractedData =
@@ -81,6 +88,10 @@ class Products with ChangeNotifier {
     if (exractedData == null) {
       return;
     }
+    url = Uri.parse(
+        'https://flutter-update.firebaseio.com/userFavorites/$userId.json?auth=$authToken');
+    final favoriteResponse = await http.get(url);
+    final favoriteData = json.decode(favoriteResponse.body);
     try {
       exractedData.forEach((prodId, prodData) {
         loadedProducts.add(AppData(
@@ -107,7 +118,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(AppData product) async {
     final Uri url = Uri.parse(
-      'https://wecodefinal-default-rtdb.firebaseio.com/products.json',
+      'https://wecodefinal-default-rtdb.firebaseio.com/products.json?auth=$authToken',
     ); //to create a new products.json if its not there as a file to save file bu post request
     try {
       http.Response response = await http.post(
@@ -151,7 +162,7 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       try {
         final Uri url = Uri.parse(
-          'https://wecodefinal-default-rtdb.firebaseio.com/products/$id.json',
+          'https://wecodefinal-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken',
         ); //to create a new pr
         await http.patch(url,
             body: jsonEncode({
@@ -173,7 +184,7 @@ class Products with ChangeNotifier {
 
   void removeProduct(String id) {
     final Uri url = Uri.parse(
-      'https://wecodefinal-default-rtdb.firebaseio.com/products/$id.json',
+      'https://wecodefinal-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken',
     );
     final existingIndex = _items.indexWhere((element) => element.id == id);
     AppData existing = _items[existingIndex];

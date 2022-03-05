@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:wecode_final/constants.dart';
 import 'package:wecode_final/providers/app_brain.dart';
+import 'package:wecode_final/providers/auth.dart';
 import 'package:wecode_final/providers/cart.dart';
 import 'package:wecode_final/screens/product_detail_screen.dart';
 
@@ -15,7 +16,9 @@ class ProductItem extends StatelessWidget {
   // final String title;
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<AppData>(context, listen: false);
     final cart = Provider.of<Cart>(context);
+    final authData = Provider.of<Auth>(context, listen: false);
     return Consumer<AppData>(
       builder: (context, product, child) => ClipRRect(
         borderRadius: BorderRadius.circular(20.0),
@@ -44,7 +47,10 @@ class ProductItem extends StatelessWidget {
                     ? Icons.favorite
                     : Icons.favorite_outline_outlined),
                 onPressed: () {
-                  product.favouriteStatus();
+                  product.toggleFavoriteStatus(
+                    authData.token,
+                    authData.userId,
+                  );
                 }),
             trailing: IconButton(
                 icon: Icon(Icons.add_shopping_cart),

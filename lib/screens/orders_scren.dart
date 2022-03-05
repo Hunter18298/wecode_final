@@ -33,12 +33,12 @@ class _OrdersScrenState extends State<OrdersScren> {
       body: FutureBuilder(
         future: _orderFuture,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
+          if (snapshot.hasData == null) {
+            return Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(),
             );
           } else {

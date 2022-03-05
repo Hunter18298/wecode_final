@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wecode_final/constants.dart';
+import 'package:wecode_final/providers/app_brain.dart';
+import 'package:wecode_final/providers/auth.dart';
 import 'package:wecode_final/providers/cart.dart';
 import 'package:wecode_final/providers/product_provider.dart';
+import 'package:wecode_final/screens/auth_screen.dart';
 import 'package:wecode_final/screens/cart_screen.dart';
 import 'package:wecode_final/screens/edit_product_screen.dart';
 import 'package:wecode_final/screens/home_screen.dart';
@@ -24,35 +27,52 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => Products(),
+          create: (context) => Auth(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => Cart(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Orders(),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'WeShop',
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-              color: kLightBlue,
-              actionsIconTheme: IconThemeData(color: kMainBlue, size: 30)),
-          colorScheme: ColorScheme.light().copyWith(
-            primary: kMainBlue,
-            secondary: kMainYellow,
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (context) => Products('', '', []),
+          update: (ctx, auth, previousProducts) => Products(
+            auth.token,
+            auth.userId,
+            previousProducts == null ? [] : previousProducts.items,
           ),
         ),
-        home: HomePage(),
-        routes: {
-          ProductDetailScreen.productDetail: (context) => ProductDetailScreen(),
-          CartScreen.cartScreen: (context) => const CartScreen(),
-          OrdersScren.routeName: (context) => OrdersScren(),
-          UserProductsScreen.routeName: (context) => UserProductsScreen(),
-          EditProductScreen.routeName: (context) => EditProductScreen()
-        },
+        ChangeNotifierProvider.value(
+          value: Cart(),
+        ),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          create: (context) => Orders('', '', []),
+          update: (ctx, auth, previousOrders) => Orders(
+            auth.token,
+            auth.userId,
+            previousOrders == null ? [] : previousOrders.orders,
+          ),
+        ),
+      ],
+      child: Consumer<Auth>(
+        builder: (context, auth, child) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'WeShop',
+          theme: ThemeData(
+            appBarTheme: AppBarTheme(
+                color: kLightBlue,
+                actionsIconTheme: IconThemeData(color: kMainBlue, size: 30)),
+            colorScheme: ColorScheme.light().copyWith(
+              primary: kMainBlue,
+              secondary: kMainYellow,
+            ),
+          ),
+          home: auth.isAuth ? AuthScreen() : HomePage(),
+          routes: {
+            ProductDetailScreen.productDetail: (context) =>
+                ProductDetailScreen(),
+            CartScreen.cartScreen: (context) => CartScreen(),
+            OrdersScren.routeName: (context) => OrdersScren(),
+            UserProductsScreen.routeName: (context) => UserProductsScreen(),
+            EditProductScreen.routeName: (context) => EditProductScreen(),
+            AuthScreen.routeName: (context) => AuthScreen(),
+          },
+        ),
       ),
     );
   }
